@@ -37,3 +37,47 @@ describe("POST /api/users", () => {
         expect(response.body.data.name).toBe("test")
     })
 })
+
+describe("POST /api/users/login", () => {
+    beforeEach(async () => {
+        await UserTest.create()
+    })
+
+    afterEach(async () => {
+        await UserTest.delete()
+    })
+
+    it("should login user", async () => {
+        const response = await supertest(web)
+            .post("/api/users/login")
+            .send({
+                username: "test",
+                password: "test"
+            })
+        console.log(response)
+        expect(response.status).toBe(200)
+        expect(response.body.data.token).toBeDefined()
+    })
+
+    it("should reject login user if username incorrect", async () => {
+        const response = await supertest(web)
+            .post("/api/users/login")
+            .send({
+                username: "salah",
+                password: "test"
+            })
+        console.log(response)
+        expect(response.status).toBe(401)
+    })
+
+    it("should reject login user if password incorrect", async () => {
+        const response = await supertest(web)
+            .post("/api/users/login")
+            .send({
+                username: "test",
+                password: "ayam"
+            })
+        console.log(response)
+        expect(response.status).toBe(401)
+    })
+})
