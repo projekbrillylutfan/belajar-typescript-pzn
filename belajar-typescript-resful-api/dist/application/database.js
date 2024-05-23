@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prismaClient = void 0;
-const client_1 = require("@prisma/client");
-const logging_1 = require("./logging");
-exports.prismaClient = new client_1.PrismaClient({
+import { PrismaClient } from "@prisma/client";
+import { logger } from "./logging.js";
+export const prismaClient = new PrismaClient({
     log: [
         {
             emit: 'event',
@@ -23,15 +20,15 @@ exports.prismaClient = new client_1.PrismaClient({
         }
     ]
 });
-exports.prismaClient.$on('error', (e) => {
-    logging_1.logger.error(e);
+prismaClient.$on('error', (e) => {
+    logger.error(e);
 });
-exports.prismaClient.$on('warn', (e) => {
-    logging_1.logger.warn(e);
+prismaClient.$on('warn', (e) => {
+    logger.warn(e);
 });
-exports.prismaClient.$on('info', (e) => {
-    logging_1.logger.info(e);
+prismaClient.$on('info', (e) => {
+    logger.info(e);
 });
-exports.prismaClient.$on('query', (e) => {
-    logging_1.logger.info(e);
+prismaClient.$on('query', (e) => {
+    logger.info(e);
 });

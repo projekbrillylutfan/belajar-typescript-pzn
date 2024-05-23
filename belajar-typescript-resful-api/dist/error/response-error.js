@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class ResponseError extends Error {
     constructor(status, message) {
         super(message);
@@ -7,4 +5,4 @@ class ResponseError extends Error {
         this.message = message;
     }
 }
-exports.default = ResponseError;
+export default ResponseError;

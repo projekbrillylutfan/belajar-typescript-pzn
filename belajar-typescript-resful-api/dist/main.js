@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const web_1 = require("./application/web");
-const logging_1 = require("./application/logging");
-web_1.web.listen(3000, () => {
-    logging_1.logger.info("Listening on port 3000");
+import { web } from "./application/web.js";
+import { logger } from "./application/logging.js";
+web.listen(3000, () => {
+    logger.info("Listening on port 3000");
 });

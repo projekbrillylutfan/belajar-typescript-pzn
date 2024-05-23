@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,90 +7,86 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = require("../application/database");
-const response_error_1 = __importDefault(require("../error/response-error"));
-const user_model_1 = require("../model/user-model");
-const user_validation_1 = __importDefault(require("../validation/user-validation"));
-const validation_1 = __importDefault(require("../validation/validation"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const uuid_1 = require("uuid");
+import { prismaClient } from "../application/database.js";
+import ResponseError from "../error/response-error.js";
+import { toUserResponse, } from "../model/user-model.js";
+import UserValidation from "../validation/user-validation.js";
+import Validation from "../validation/validation.js";
+import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
 class UserServices {
     static register(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const registerRequest = validation_1.default.validate(user_validation_1.default.REGISTER, request);
-            const totalUserWithSameUsername = yield database_1.prismaClient.user.count({
+            const registerRequest = Validation.validate(UserValidation.REGISTER, request);
+            const totalUserWithSameUsername = yield prismaClient.user.count({
                 where: {
                     username: registerRequest.username,
                 },
             });
             if (totalUserWithSameUsername != 0) {
-                throw new response_error_1.default(400, "Username already exists");
+                throw new ResponseError(400, "Username already exists");
             }
-            registerRequest.password = yield bcrypt_1.default.hash(registerRequest.password, 10);
-            const user = yield database_1.prismaClient.user.create({
+            registerRequest.password = yield bcrypt.hash(registerRequest.password, 10);
+            const user = yield prismaClient.user.create({
                 data: registerRequest,
             });
-            return (0, user_model_1.toUserResponse)(user);
+            return toUserResponse(user);
         });
     }
     static login(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const loginRequest = validation_1.default.validate(user_validation_1.default.LOGIN, request);
-            let user = yield database_1.prismaClient.user.findUnique({
+            const loginRequest = Validation.validate(UserValidation.LOGIN, request);
+            let user = yield prismaClient.user.findUnique({
                 where: {
                     username: loginRequest.username,
                 },
             });
             if (!user) {
-                throw new response_error_1.default(401, "Username or password is wrong");
+                throw new ResponseError(401, "Username or password is wrong");
             }
-            const isPasswordValid = yield bcrypt_1.default.compare(loginRequest.password, user.password);
+            const isPasswordValid = yield bcrypt.compare(loginRequest.password, user.password);
             if (!isPasswordValid) {
-                throw new response_error_1.default(401, "Username or password is wrong");
+                throw new ResponseError(401, "Username or password is wrong");
             }
-            user = yield database_1.prismaClient.user.update({
+            user = yield prismaClient.user.update({
                 where: {
                     username: loginRequest.username,
                 },
                 data: {
-                    token: (0, uuid_1.v4)(),
+                    token: uuid(),
                 },
             });
-            const response = (0, user_model_1.toUserResponse)(user);
+            const response = toUserResponse(user);
             response.token = user.token;
             return response;
         });
     }
     static get(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, user_model_1.toUserResponse)(user);
+            return toUserResponse(user);
         });
     }
     static update(user, request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updateRequest = validation_1.default.validate(user_validation_1.default.UPDATE, request);
+            const updateRequest = Validation.validate(UserValidation.UPDATE, request);
             if (updateRequest.name) {
                 user.name = updateRequest.name;
             }
             if (updateRequest.password) {
-                user.password = yield bcrypt_1.default.hash(updateRequest.password, 10);
+                user.password = yield bcrypt.hash(updateRequest.password, 10);
             }
-            const result = yield database_1.prismaClient.user.update({
+            const result = yield prismaClient.user.update({
                 where: {
                     username: user.username,
                 },
                 data: user,
             });
-            return (0, user_model_1.toUserResponse)(result);
+            return toUserResponse(result);
         });
     }
     static logout(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield database_1.prismaClient.user.update({
+            const result = yield prismaClient.user.update({
                 where: {
                     username: user.username
                 },
@@ -99,8 +94,8 @@ class UserServices {
                     token: null
                 }
             });
-            return (0, user_model_1.toUserResponse)(result);
+            return toUserResponse(result);
         });
     }
 }
-exports.default = UserServices;
+export default UserServices;

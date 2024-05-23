@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,13 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.authMiddleware = void 0;
-const database_1 = require("../application/database");
-const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+import { prismaClient } from "../application/database.js";
+export const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.get('X-API-TOKEN');
     if (token) {
-        const user = yield database_1.prismaClient.user.findFirst({
+        const user = yield prismaClient.user.findFirst({
             where: {
                 token: token
             }
@@ -29,4 +26,3 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         errors: "Unauthorized"
     }).end();
 });
-exports.authMiddleware = authMiddleware;

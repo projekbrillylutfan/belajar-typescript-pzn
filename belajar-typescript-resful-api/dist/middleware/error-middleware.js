@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,20 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorMiddleware = void 0;
-const zod_1 = require("zod");
-const response_error_1 = __importDefault(require("../error/response-error"));
-const errorMiddleware = (error, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (error instanceof zod_1.ZodError) {
+import { ZodError } from "zod";
+import ResponseError from "../error/response-error.js";
+export const errorMiddleware = (error, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (error instanceof ZodError) {
         res.status(400).json({
             errors: `Validation Error: ${JSON.stringify(error)}`,
         });
     }
-    else if (error instanceof response_error_1.default) {
+    else if (error instanceof ResponseError) {
         res.status(error.status).json({
             errors: error.message,
         });
@@ -32,4 +26,3 @@ const errorMiddleware = (error, req, res, next) => __awaiter(void 0, void 0, voi
         });
     }
 });
-exports.errorMiddleware = errorMiddleware;

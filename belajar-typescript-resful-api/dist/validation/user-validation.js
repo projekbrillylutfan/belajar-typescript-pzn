@@ -1,19 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const zod_1 = require("zod");
+import { z } from "zod";
 class UserValidation {
 }
-UserValidation.REGISTER = zod_1.z.object({
-    username: zod_1.z.string().min(1).max(100),
-    password: zod_1.z.string().min(1).max(100),
-    name: zod_1.z.string().min(1).max(100),
+UserValidation.REGISTER = z.object({
+    username: z.string().min(1).max(100),
+    password: z.string().min(1).max(100),
+    name: z.string().min(1).max(100),
 });
-UserValidation.LOGIN = zod_1.z.object({
-    username: zod_1.z.string().min(1).max(100),
-    password: zod_1.z.string().min(1).max(100),
+UserValidation.LOGIN = z.object({
+    username: z.string().min(1).max(100),
+    password: z.string().min(1).max(100),
 });
-UserValidation.UPDATE = zod_1.z.object({
-    password: zod_1.z.string().min(1).max(100).optional(),
-    name: zod_1.z.string().min(1).max(100).optional(),
+UserValidation.UPDATE = z.object({
+    password: z.string().min(1).max(100).optional(),
+    name: z.string().min(1).max(100).optional(),
 });
-exports.default = UserValidation;
+export default UserValidation;

@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.web = void 0;
-const express_1 = __importDefault(require("express"));
-const public_api_1 = require("../route/public-api");
-const error_middleware_1 = require("../middleware/error-middleware");
-const api_1 = require("../route/api");
-exports.web = (0, express_1.default)();
-exports.web.use(express_1.default.json());
-exports.web.use(public_api_1.publicRouter);
-exports.web.use(api_1.apiRouter);
-exports.web.use(error_middleware_1.errorMiddleware);
+import express from "express";
+import { publicRouter } from "../route/public-api.js";
+import { errorMiddleware } from "../middleware/error-middleware.js";
+import { apiRouter } from "../route/api.js";
+export const web = express();
+web.use(express.json());
+web.use(publicRouter);
+web.use(apiRouter);
+web.use(errorMiddleware);

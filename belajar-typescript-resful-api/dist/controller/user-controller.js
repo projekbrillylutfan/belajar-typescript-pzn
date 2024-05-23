@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,17 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const user_service_1 = __importDefault(require("../service/user-service"));
+import UserServices from "../service/user-service.js";
 class UserController {
     static register(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = req.body;
-                const response = yield user_service_1.default.register(request);
+                const response = yield UserServices.register(request);
                 res.status(200).json({
                     data: response,
                 });
@@ -32,7 +27,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = req.body;
-                const response = yield user_service_1.default.login(request);
+                const response = yield UserServices.login(request);
                 res.status(200).json({
                     data: response,
                 });
@@ -45,7 +40,7 @@ class UserController {
     static get(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield user_service_1.default.get(req.user);
+                const response = yield UserServices.get(req.user);
                 res.status(200).json({
                     data: response,
                 });
@@ -59,7 +54,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = req.body;
-                const response = yield user_service_1.default.update(req.user, request);
+                const response = yield UserServices.update(req.user, request);
                 res.status(200).json({
                     data: response,
                 });
@@ -72,7 +67,7 @@ class UserController {
     static logout(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield user_service_1.default.logout(req.user);
+                const response = yield UserServices.logout(req.user);
                 res.status(200).json({
                     data: "ok",
                 });
@@ -83,4 +78,4 @@ class UserController {
         });
     }
 }
-exports.default = UserController;
+export default UserController;

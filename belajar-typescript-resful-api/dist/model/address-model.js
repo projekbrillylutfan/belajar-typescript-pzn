@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.toAddressResponse = void 0;
-function toAddressResponse(address) {
+export function toAddressResponse(address) {
     return {
         id: address.id,
         street: address.street,
@@ -11,4 +8,3 @@ function toAddressResponse(address) {
         postal_code: address.postal_code,
     };
 }
-exports.toAddressResponse = toAddressResponse;

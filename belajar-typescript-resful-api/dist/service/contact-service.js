@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,37 +7,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContactService = void 0;
-const contact_model_1 = require("../model/contact-model");
-const validation_1 = __importDefault(require("../validation/validation"));
-const contact_validation_1 = require("../validation/contact-validation");
-const database_1 = require("../application/database");
-const response_error_1 = __importDefault(require("../error/response-error"));
-class ContactService {
+import { toContactRespnose } from "../model/contact-model.js";
+import Validation from "../validation/validation.js";
+import { ContactValidation } from "../validation/contact-validation.js";
+import { prismaClient } from "../application/database.js";
+import ResponseError from "../error/response-error.js";
+export class ContactService {
     static create(user, request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createRequest = validation_1.default.validate(contact_validation_1.ContactValidation.CREATE, request);
+            const createRequest = Validation.validate(ContactValidation.CREATE, request);
             const record = Object.assign(Object.assign({}, createRequest), { username: user.username });
-            const contact = yield database_1.prismaClient.contact.create({
+            const contact = yield prismaClient.contact.create({
                 data: record
             });
-            return (0, contact_model_1.toContactRespnose)(contact);
+            return toContactRespnose(contact);
         });
     }
     static checkContactMustExists(username, contactId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contact = yield database_1.prismaClient.contact.findFirst({
+            const contact = yield prismaClient.contact.findFirst({
                 where: {
                     id: contactId,
                     username: username
                 }
             });
             if (!contact) {
-                throw new response_error_1.default(404, "Contact not found");
+                throw new ResponseError(404, "Contact not found");
             }
             return contact;
         });
@@ -46,38 +40,38 @@ class ContactService {
     static get(user, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const contact = yield this.checkContactMustExists(user.username, id);
-            return (0, contact_model_1.toContactRespnose)(contact);
+            return toContactRespnose(contact);
         });
     }
     static update(user, request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updateRequest = validation_1.default.validate(contact_validation_1.ContactValidation.UPDATE, request);
+            const updateRequest = Validation.validate(ContactValidation.UPDATE, request);
             yield this.checkContactMustExists(user.username, updateRequest.id);
-            const contact = yield database_1.prismaClient.contact.update({
+            const contact = yield prismaClient.contact.update({
                 where: {
                     id: updateRequest.id,
                     username: user.username
                 },
                 data: updateRequest
             });
-            return (0, contact_model_1.toContactRespnose)(contact);
+            return toContactRespnose(contact);
         });
     }
     static remove(user, id) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.checkContactMustExists(user.username, id);
-            const contact = yield database_1.prismaClient.contact.delete({
+            const contact = yield prismaClient.contact.delete({
                 where: {
                     id: id,
                     username: user.username
                 }
             });
-            return (0, contact_model_1.toContactRespnose)(contact);
+            return toContactRespnose(contact);
         });
     }
     static search(user, request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const searchRequest = validation_1.default.validate(contact_validation_1.ContactValidation.SEARCH, request);
+            const searchRequest = Validation.validate(ContactValidation.SEARCH, request);
             const skip = (searchRequest.page - 1) * searchRequest.size;
             const filters = [];
             // check if name exists
@@ -113,7 +107,7 @@ class ContactService {
                     }
                 });
             }
-            const contacts = yield database_1.prismaClient.contact.findMany({
+            const contacts = yield prismaClient.contact.findMany({
                 where: {
                     username: user.username,
                     AND: filters
@@ -121,14 +115,14 @@ class ContactService {
                 take: searchRequest.size,
                 skip: skip
             });
-            const total = yield database_1.prismaClient.contact.count({
+            const total = yield prismaClient.contact.count({
                 where: {
                     username: user.username,
                     AND: filters
                 },
             });
             return {
-                data: contacts.map(contact => (0, contact_model_1.toContactRespnose)(contact)),
+                data: contacts.map(contact => toContactRespnose(contact)),
                 paging: {
                     current_page: searchRequest.page,
                     total_page: Math.ceil(total / searchRequest.size),
@@ -138,4 +132,3 @@ class ContactService {
         });
     }
 }
-exports.ContactService = ContactService;
