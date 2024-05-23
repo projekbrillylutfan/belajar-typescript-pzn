@@ -1,6 +1,6 @@
 import { Address, User } from "@prisma/client";
 import { prismaClient } from "../application/database";
-import { CreateAddressRequest, AddressResponse, toAddressResponse, GetAddressRequest } from "../model/address-model";
+import { CreateAddressRequest, AddressResponse, toAddressResponse, GetAddressRequest, UpdateAddressRequest } from "../model/address-model";
 import { AddressValidation } from "../validation/address-validation";
 import Validation from "../validation/validation";
 import { ContactService } from "./contact-service";
@@ -37,6 +37,22 @@ export class AddressService {
         const getRequest = Validation.validate(AddressValidation.GET, request);
         await ContactService.checkContactMustExists(user.username, request.contact_id);
         const address = await this.checkAddressMustExists(getRequest.contact_id, getRequest.id);
+
+        return toAddressResponse(address);
+    }
+
+    static async update(user: User, request: UpdateAddressRequest): Promise<AddressResponse> {
+        const updateRequest = Validation.validate(AddressValidation.UPDATE, request);
+        await ContactService.checkContactMustExists(user.username, request.contact_id);
+        await this.checkAddressMustExists(updateRequest.contact_id, updateRequest.id);
+
+        const address = await prismaClient.address.update({
+            where: {
+                id: updateRequest.id,
+                contact_id: updateRequest.contact_id
+            },
+            data: updateRequest
+        })
 
         return toAddressResponse(address);
     }
