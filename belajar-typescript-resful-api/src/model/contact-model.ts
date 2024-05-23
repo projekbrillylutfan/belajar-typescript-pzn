@@ -23,6 +23,14 @@ export type UpdateContactRequest = {
     phone?: string;
 }
 
+export type SearchContactRequest = {
+    name?: string;
+    phone?: string;
+    email?: string;
+    page: number;
+    size: number;
+}
+
 export function toContactRespnose(contact: Contact): ContactRespones {
     return {
         id: contact.id,
