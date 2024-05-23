@@ -1,5 +1,5 @@
 import { Contact, User } from "@prisma/client";
-import { ContactRespones, CreateContactRequest, toContactRespnose } from "../model/contact-model";
+import { ContactRespones, CreateContactRequest, UpdateContactRequest, toContactRespnose } from "../model/contact-model";
 import Validation from "../validation/validation";
 import { ContactValidation } from "../validation/contact-validation";
 import { prismaClient } from "../application/database";
@@ -38,6 +38,21 @@ export class ContactService {
 
     static async get(user: User, id: number): Promise<ContactRespones> {
         const contact = await this.checkContactMustExists(user.username, id);
+        return toContactRespnose(contact);
+    }
+
+    static async update(user: User, request: UpdateContactRequest) : Promise<ContactRespones> {
+        const updateRequest = Validation.validate(ContactValidation.UPDATE, request);
+        await this.checkContactMustExists(user.username, updateRequest.id);
+
+        const contact = await prismaClient.contact.update({
+            where: {
+                id: updateRequest.id,
+                username: user.username
+            },
+            data: updateRequest
+        });
+
         return toContactRespnose(contact);
     }
 }
