@@ -102,6 +102,19 @@ class UserServices {
 
     return toUserResponse(result)
   }
+
+  static async logout(user: User): Promise<UserResponse> {
+    const result = await prismaClient.user.update({
+      where: {
+        username: user.username
+      },
+      data: {
+        token: null
+      }
+    })
+
+    return toUserResponse(result)
+  }
 }
 
 export default UserServices;
