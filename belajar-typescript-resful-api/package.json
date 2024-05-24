@@ -4,9 +4,9 @@
   "description": "belajar typescript restful api",
   "main": "./src/server.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "tsc",
-    "dev": "ts-node-dev --project tsconfig.json ./src/main.ts"
+    "start": "node dist/main.js"
   },
   "jest": {
     "transform": {
@@ -15,7 +15,6 @@
   },
   "author": "billy uhuy",
   "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",

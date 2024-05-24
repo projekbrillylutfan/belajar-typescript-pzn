@@ -15,7 +15,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "ayam",
+  "username": "",
   "password" : ""
 }
 
