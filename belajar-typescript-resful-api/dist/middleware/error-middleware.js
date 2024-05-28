@@ -26,12 +26,16 @@ const errorMiddleware = (error, req, res, next) => __awaiter(void 0, void 0, voi
     }
     else if (error instanceof response_error_1.default) {
         res.status(error.status).json({
-            errors: error.message,
+            status: error.status,
+            message: error.message,
+            data: null
         });
     }
     else {
         res.status(500).json({
-            errors: error.message,
+            status: 500,
+            message: error.message,
+            data: null
         });
     }
 });
